@@ -5,7 +5,6 @@ import os
 import flask
 import googleapiclient.discovery
 
-import config
 from google_api import GoogleAPI, TagGoogleCredentials, api_required
 from forms import LoginForm, LogoutForm, ScheduleSettingsForm
 import subjects
