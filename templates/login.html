@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+Привет! Я могу добавить расписание 694й группы в твой Google Calendar.
+Но для этого мне нужно твоё разрешение.
+<form method="post" action="/login">
+{{ form.csrf_token }}
+  <button>Войти через Google</button>
+</form>
+{% endblock %}

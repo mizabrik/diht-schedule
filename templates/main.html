@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+form ul {
+  padding: 0;
+  list-style-type: none;
+  margin-top: 0;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+  var createCalendarIds = [
+    {% for subfield in schedule_form.create_calendar %}
+    '{{ subfield.id }}',
+    {% endfor %}
+  ];
+
+  function showProperCalendarSelect() {
+    for (var i = 0; i < createCalendarIds.length; ++i) {
+      document.getElementById(createCalendarIds[i] + '-select').style.display =
+        document.getElementById(createCalendarIds[i]).checked ? 'block' : 'none';
+    }
+  }
+  showProperCalendarSelect();
+
+  for (var i = 0; i < createCalendarIds.length; ++i) {
+    document.getElementById(createCalendarIds[i]).addEventListener(
+      'change',
+      showProperCalendarSelect
+    );
+  }
+});
+</script>
+{% endblock %}
+
+{% block body %}
+{% if email %}
+{{ email }}
+<form method="post" action="/logout">
+  {{ logout_form.csrf_token }}
+  <button>Выйти</button>
+</form>
+{% endif %}
+
+<h1>Настройки расписания</h1>
+{% if schedule_form.errors %}
+Такая простая форма, а вы ошибиться умудрились.
+<ul class="errors">
+  {% for field_name, field_errors in schedule_form.errors|dictsort if field_errors %}
+  {% for error in field_errors %}
+  <li>{{ schedule_form[field_name].label }}: {{ error }}</li>
+  {% endfor %}
+  {% endfor %}
+</ul>
+{% endif %}
+<form method="post" action="/create_schedule">
+  {{ schedule_form.csrf_token }}
+  {{ schedule_form.create_calendar.label }}
+  <ul>
+    {% for subfield, select in schedule_form.create_calendar|zip([schedule_form.new_calendar, schedule_form.existing_calendar]) %}
+    <li>
+      {{ subfield }} {{ subfield.label }}
+      <div id="{{ subfield.id }}-select">{{ select }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {{ schedule_form.use_alt_name.label }}
+  {{ schedule_form.use_alt_name }}
+
+  <h2>Выбор курсов</h2>
+  {{ schedule_form.obligatory }} {{ schedule_form.obligatory.label }}
+  {% for group in schedule_form.electives %}
+    <h3>{{ group.label }}</h3>
+    {{ group }}
+  {% endfor %}
+  <button>Создать расписание</button>
+</form>
+{% endblock %}
