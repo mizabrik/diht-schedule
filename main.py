@@ -45,8 +45,7 @@ def create_schedule(api):
         return flask.redirect('/')
 
     if form.create_calendar.data:
-        print("Create calendar")
-        #calendar = api.create_calendar(form.new_calendar.data)
+        calendar = api.create_calendar(form.new_calendar.data)
     else:
         calendar = form.existing_calendar.data
 
@@ -66,8 +65,7 @@ def create_schedule(api):
         for elective in electives:
             add_events(subjects.electives[elective])
 
-    print("Create events")
-    #api.create_events(calendar, events)
+    api.create_events(calendar, events)
 
     return flask.redirect('/success')
 
