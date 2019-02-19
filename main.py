@@ -13,7 +13,7 @@ import subjects
 
 app = flask.Flask(__name__)
 
-app.secret_key = config.secret_key
+app.secret_key = os.environ['FLASK_SECRET_KEY']
 app.jinja_env.filters['zip'] = zip
 app.session_interface.serializer.register(TagGoogleCredentials)
 

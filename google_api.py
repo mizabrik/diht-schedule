@@ -1,4 +1,6 @@
 from functools import wraps
+import json
+import os
 
 import flask
 import flask.json.tag
@@ -7,7 +9,7 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import requests
 
-CLIENT_SECRETS_FILE = "client_secrets.json"
+CLIENT_CONFIG = json.loads(os.environ['GOOGLE_CLIENT_CONFIG'])
 SCOPES = [
     'openid',
     'https://www.googleapis.com/auth/userinfo.email',
@@ -58,14 +60,14 @@ class GoogleAPI:
 
     @staticmethod
     def get_authentication_url(callback_uri):
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-              CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri=callback_uri)
+        flow = google_auth_oauthlib.flow.Flow.from_client_config(
+              CLIENT_CONFIG, scopes=SCOPES, redirect_uri=callback_uri)
         return flow.authorization_url(access_type='offline')
 
     @staticmethod
     def process_authentication_response(response, state, callback_uri):
-        flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-              CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri=callback_uri)
+        flow = google_auth_oauthlib.flow.Flow.from_client_config(
+              CLIENT_CONFIG, scopes=SCOPES, redirect_uri=callback_uri)
         flow.fetch_token(authorization_response=response)
         return flow.credentials
 
